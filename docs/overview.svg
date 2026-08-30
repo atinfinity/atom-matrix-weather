@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" font-family="Helvetica, Arial, 'Hiragino Sans', sans-serif">
+  <rect width="960" height="560" fill="#ffffff"/>
+  <text x="450" y="34" text-anchor="middle" font-size="22" font-weight="bold" fill="#222">AtomMatrixWeather 動作イメージ</text>
+
+  <!-- ===== LED display example ===== -->
+  <text x="190" y="72" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">表示例: 午前=晴 / 午後=雨</text>
+  <rect x="80" y="86" width="220" height="220" rx="18" fill="#2b2b2b"/>
+  <!-- 5x5 grid: 40px pitch, 30px cells starting at (90,96) -->
+  <g id="grid">
+    <!-- rows -->
+    <g>
+      <rect x="95" y="101" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="101" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="101" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="101" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="101" width="30" height="30" rx="6" fill="#0040ff"/>
+      <rect x="95" y="141" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="141" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="141" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="141" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="141" width="30" height="30" rx="6" fill="#0040ff"/>
+      <rect x="95" y="181" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="181" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="181" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="181" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="181" width="30" height="30" rx="6" fill="#0040ff"/>
+      <rect x="95" y="221" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="221" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="221" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="221" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="221" width="30" height="30" rx="6" fill="#0040ff"/>
+      <rect x="95" y="261" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="261" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="261" width="30" height="30" rx="6" fill="#ff0000"/><rect x="215" y="261" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="261" width="30" height="30" rx="6" fill="#0040ff"/>
+    </g>
+  </g>
+  <!-- USB connector -->
+  <rect x="172" y="306" width="36" height="12" rx="3" fill="#888"/>
+  <text x="190" y="336" text-anchor="middle" font-size="12" fill="#666">USB-C (下向き)</text>
+
+  <!-- annotations -->
+  <text x="130" y="360" text-anchor="middle" font-size="13" fill="#333">午前 (6-12時)</text>
+  <text x="250" y="360" text-anchor="middle" font-size="13" fill="#333">午後 (12-18時)</text>
+  <line x1="190" y1="296" x2="190" y2="376" stroke="#c00" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <text x="190" y="392" text-anchor="middle" font-size="12" fill="#c00">ステータス: 黄=取得中 / 赤=失敗</text>
+
+  <!-- legend -->
+  <g font-size="13" fill="#333">
+    <text x="60" y="428" font-weight="bold">色の凡例</text>
+    <rect x="60" y="440" width="16" height="16" rx="3" fill="#ff7800"/><text x="84" y="453">晴</text>
+    <rect x="130" y="440" width="16" height="16" rx="3" fill="#8a8a8a"/><text x="154" y="453">曇</text>
+    <rect x="200" y="440" width="16" height="16" rx="3" fill="#0040ff"/><text x="224" y="453">雨</text>
+    <rect x="270" y="440" width="16" height="16" rx="3" fill="#50c8ff"/><text x="294" y="453">雪</text>
+    <rect x="60" y="468" width="16" height="16" rx="3" fill="#a000ff"/><text x="84" y="481">雷雨</text>
+    <rect x="130" y="468" width="16" height="16" rx="3" fill="#0050ff"/><text x="154" y="481">青回転 = 設定モード</text>
+    <rect x="60" y="496" width="16" height="16" rx="3" fill="#00c800"/><text x="84" y="509">緑回転 = Wi-Fi 接続待ち</text>
+    <text x="60" y="540" font-size="12" fill="#666">各時間帯は時間別の天気コードのうち最も悪いものを採用 (晴 &lt; 曇 &lt; 雨 &lt; 雪 &lt; 雷雨)</text>
+  </g>
+
+  <!-- ===== Flow ===== -->
+  <text x="640" y="72" text-anchor="middle" font-size="15" font-weight="bold" fill="#333">動作フロー</text>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+  </defs>
+  <g font-size="13" fill="#222" text-anchor="middle">
+    <!-- boot -->
+    <rect x="560" y="90" width="160" height="40" rx="8" fill="#eef2f7" stroke="#889"/>
+    <text x="640" y="115">電源 ON</text>
+    <line x1="640" y1="130" x2="640" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- decision -->
+    <polygon points="640,160 740,200 640,240 540,200" fill="#fff7e0" stroke="#b90"/>
+    <text x="640" y="196">Wi-Fi 未設定 or</text>
+    <text x="640" y="212">ボタン押下中?</text>
+
+    <!-- yes -> config mode -->
+    <line x1="740" y1="200" x2="800" y2="200" stroke="#555" stroke-width="1.5"/>
+    <text x="770" y="192" font-size="11" fill="#555">Yes</text>
+    <line x1="800" y1="200" x2="800" y2="270" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="730" y="270" width="150" height="70" rx="8" fill="#e3ecff" stroke="#3a6ad8"/>
+    <text x="805" y="292" font-weight="bold">設定モード</text>
+    <text x="805" y="310" font-size="11">AP: AtomWeather-XXXX</text>
+    <text x="805" y="326" font-size="11">http://192.168.4.1/</text>
+
+    <!-- config: smartphone -->
+    <rect x="730" y="360" width="150" height="56" rx="8" fill="#f4f4f4" stroke="#999"/>
+    <text x="805" y="382" font-size="12">スマホ/PCから</text>
+    <text x="805" y="398" font-size="12">SSID・PW・都道府県を保存</text>
+    <line x1="805" y1="340" x2="805" y2="360" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <!-- restart back to boot -->
+    <path d="M880,388 L892,388 L892,110 L720,110" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="893" y="250" font-size="11" fill="#555" transform="rotate(90 893 250)">再起動</text>
+
+    <!-- no -> normal -->
+    <line x1="640" y1="240" x2="640" y2="270" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="655" y="260" font-size="11" fill="#555">No</text>
+    <rect x="540" y="270" width="170" height="52" rx="8" fill="#e6f7e6" stroke="#3a8a3a"/>
+    <text x="625" y="292" font-weight="bold">Wi-Fi 接続 (緑回転)</text>
+    <text x="625" y="310" font-size="11">Open-Meteo から今日の天気を取得</text>
+    <line x1="625" y1="322" x2="625" y2="352" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="540" y="352" width="170" height="52" rx="8" fill="#fff0e0" stroke="#d87a2a"/>
+    <text x="625" y="374" font-weight="bold">LED に午前/午後を表示</text>
+    <text x="625" y="392" font-size="11">失敗時は前回表示を維持 + 赤ドット</text>
+
+    <!-- loop back -->
+    <path d="M540,378 L510,378 L510,296 L540,296" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="508" y="336" font-size="11" fill="#555" text-anchor="end">30分ごと /</text>
+    <text x="508" y="350" font-size="11" fill="#555" text-anchor="end">短押しで即時</text>
+
+    <!-- long press -> config -->
+    <path d="M710,378 L722,378 L722,305 L730,305" fill="none" stroke="#3a6ad8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+    <text x="706" y="340" font-size="11" fill="#3a6ad8" text-anchor="end">3秒長押し</text>
+  </g>
+</svg>

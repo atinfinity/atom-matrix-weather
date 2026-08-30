@@ -3,6 +3,10 @@
 M5Stack **ATOM Matrix** の 5x5 LED に、今日の午前・午後の天気を色で表示するスケッチです。
 天気データは [Open-Meteo](https://open-meteo.com/) から取得します(無料・API キー不要)。
 
+## 動作イメージ
+
+![動作イメージ](docs/overview.svg)
+
 ## 表示
 
 USB-C コネクタを下にして正面から見た向きが基準です。
