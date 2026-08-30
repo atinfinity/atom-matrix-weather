@@ -47,6 +47,7 @@ jobs:
         run: |
           mkdir -p site/firmware
           cp -r docs/. site/
+          rm -f site/*.md  # Markdown ドキュメントは Pages に含めない
           cp build/AtomMatrixWeather.ino.merged.bin site/firmware/AtomMatrixWeather.merged.bin
           VERSION="${{ steps.ver.outputs.version }}"
           sed "s/__VERSION__/${VERSION}/g" docs/manifest.json > site/manifest.json
