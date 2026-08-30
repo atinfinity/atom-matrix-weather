@@ -9,6 +9,7 @@
  *   - 設定       : 初回起動時 or ボタン3秒長押しで AP モードに入り、
  *                  スマホ/PC から Wi-Fi と都道府県を設定 (Preferences に保存)
  *   - 更新       : UPDATE_INTERVAL_MS ごとに定期取得。ボタン短押しで即時取得
+ *   - 再接続     : Wi-Fi 切断を loop() で監視し、指数バックオフで自動再接続
  *
  * 必要ライブラリ : M5Unified, ArduinoJson (v7), Adafruit NeoPixel
  * ボード         : M5Atom (M5Stack esp32 core 3.x)
@@ -31,6 +32,8 @@
 #define LED_BRIGHTNESS 20                          // 0-255 (ATOM の LED はかなり眩しい)
 #define ROTATE_180 0                               // 1 にすると表示を180度回転
 #define WIFI_CONNECT_TIMEOUT_MS 20000              // Wi-Fi 接続待ちの上限
+#define WIFI_RETRY_INITIAL_MS 10000                // 再接続バックオフの初期間隔 (10秒)
+#define WIFI_RETRY_MAX_MS (5UL * 60UL * 1000UL)    // 再接続バックオフの上限 (5分)
 #define LONG_PRESS_MS 3000                         // 設定モードに入る長押し時間
 #define DEFAULT_PREF_INDEX 12                      // 設定不正時のフォールバック (東京都)
 
@@ -127,7 +130,8 @@ static WeatherKind classifyWmo(int code) {
 // ------------------------------------------------------------
 // 状態
 // ------------------------------------------------------------
-enum StatusKind : uint8_t { ST_NONE, ST_FETCHING, ST_ERROR };
+enum StatusKind : uint8_t { ST_NONE, ST_CONNECTING, ST_FETCHING, ST_ERROR };
+enum WifiState : uint8_t { WIFI_IDLE, WIFI_CONNECTING, WIFI_CONNECTED, WIFI_WAIT_RETRY };
 
 struct Settings {
   String ssid;
@@ -141,7 +145,13 @@ WeatherKind afternoon = WX_UNKNOWN;
 StatusKind status = ST_NONE;
 bool configMode = false;
 unsigned long lastFetchMs = 0;
+bool hasFetched = false;     // 一度でも取得を試みたか (表示の切り替えに使用)
+bool lastFetchOk = false;    // 直近の取得が成功したか
 bool fetchRequested = true;  // 起動直後に1回取得
+
+WifiState wifiState = WIFI_IDLE;
+unsigned long wifiStateSinceMs = 0;
+unsigned long wifiRetryDelayMs = WIFI_RETRY_INITIAL_MS;
 
 // ------------------------------------------------------------
 // LED ユーティリティ
@@ -165,6 +175,7 @@ static void renderWeather() {
     pixels.setPixelColor(ledIndex(row, 4), pm);
   }
   uint32_t st = 0;
+  if (status == ST_CONNECTING) st = pixels.Color(0, 200, 0);
   if (status == ST_FETCHING) st = pixels.Color(255, 200, 0);
   if (status == ST_ERROR) st = pixels.Color(255, 0, 0);
   pixels.setPixelColor(ledIndex(4, 2), st);
@@ -214,25 +225,55 @@ static void saveSettings() {
 // ------------------------------------------------------------
 // 天気取得
 // ------------------------------------------------------------
-static bool connectWiFi() {
-  if (WiFi.status() == WL_CONNECTED) return true;
+// 非ブロッキングの Wi-Fi ステートマシン。loop() から毎回呼ぶ。
+static void wifiStartConnect() {
   Serial.printf("[WiFi] connecting to %s\n", settings.ssid.c_str());
   WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
   WiFi.begin(settings.ssid.c_str(), settings.pass.c_str());
-  unsigned long start = millis();
-  while (WiFi.status() != WL_CONNECTED) {
-    if (millis() - start > WIFI_CONNECT_TIMEOUT_MS) {
-      Serial.println("[WiFi] connect timeout");
-      WiFi.disconnect(true);
-      return false;
-    }
-    renderSpinner(pixels.Color(0, 255, 0));
-    M5.update();
-    delay(10);
-  }
-  Serial.printf("[WiFi] connected: %s\n", WiFi.localIP().toString().c_str());
-  return true;
+  wifiState = WIFI_CONNECTING;
+  wifiStateSinceMs = millis();
 }
+
+static void wifiTick() {
+  unsigned long now = millis();
+  switch (wifiState) {
+    case WIFI_IDLE:
+      wifiStartConnect();
+      break;
+
+    case WIFI_CONNECTING:
+      if (WiFi.status() == WL_CONNECTED) {
+        Serial.printf("[WiFi] connected: %s\n", WiFi.localIP().toString().c_str());
+        wifiState = WIFI_CONNECTED;
+        wifiRetryDelayMs = WIFI_RETRY_INITIAL_MS;
+        // 切断中に取得タイミングを逃した / 直近が失敗なら即取得
+        if (hasFetched && (!lastFetchOk || now - lastFetchMs >= UPDATE_INTERVAL_MS)) fetchRequested = true;
+      } else if (now - wifiStateSinceMs > WIFI_CONNECT_TIMEOUT_MS) {
+        Serial.printf("[WiFi] connect timeout, retry in %lu s\n", wifiRetryDelayMs / 1000UL);
+        WiFi.disconnect(false);
+        wifiState = WIFI_WAIT_RETRY;
+        wifiStateSinceMs = now;
+      }
+      break;
+
+    case WIFI_CONNECTED:
+      if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("[WiFi] disconnected, reconnecting");
+        wifiStartConnect();
+      }
+      break;
+
+    case WIFI_WAIT_RETRY:
+      if (now - wifiStateSinceMs >= wifiRetryDelayMs) {
+        wifiRetryDelayMs = min(wifiRetryDelayMs * 2, (unsigned long)WIFI_RETRY_MAX_MS);
+        wifiStartConnect();
+      }
+      break;
+  }
+}
+
+static bool wifiIsConnected() { return wifiState == WIFI_CONNECTED; }
 
 static bool fetchWeather() {
   const Prefecture& p = PREFECTURES[settings.prefIndex];
@@ -288,10 +329,24 @@ static bool fetchWeather() {
 static void doFetch() {
   status = ST_FETCHING;
   renderWeather();
-  bool ok = connectWiFi() && fetchWeather();
-  status = ok ? ST_NONE : ST_ERROR;
+  lastFetchOk = fetchWeather();
+  status = lastFetchOk ? ST_NONE : ST_ERROR;
   lastFetchMs = millis();
+  hasFetched = true;
   renderWeather();
+}
+
+// 通常モードの表示更新: 天気未取得で接続待ちなら緑回転、それ以外は天気+ステータスドット
+static void renderNormal() {
+  if (!wifiIsConnected() && morning == WX_UNKNOWN) {
+    renderSpinner(pixels.Color(0, 255, 0));
+    return;
+  }
+  StatusKind desired = !wifiIsConnected() ? ST_CONNECTING : (lastFetchOk ? ST_NONE : ST_ERROR);
+  if (status != desired) {
+    status = desired;
+    renderWeather();
+  }
 }
 
 // ------------------------------------------------------------
@@ -458,10 +513,16 @@ void loop() {
     fetchRequested = true;
   }
 
-  if (fetchRequested || millis() - lastFetchMs >= UPDATE_INTERVAL_MS) {
+  wifiTick();
+
+  if (!fetchRequested && hasFetched && millis() - lastFetchMs >= UPDATE_INTERVAL_MS) {
+    fetchRequested = true;
+  }
+  if (fetchRequested && wifiIsConnected()) {
     fetchRequested = false;
     doFetch();
   }
 
+  renderNormal();
   delay(20);
 }
