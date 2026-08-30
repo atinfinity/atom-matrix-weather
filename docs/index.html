@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AtomMatrixWeather インストール</title>
+<style>
+  body { font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; color: #222; }
+  h1 { font-size: 1.5rem; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin: 1.25rem 0; }
+  .note { background: #fff8e1; border-color: #f0d080; }
+  code { background: #f2f2f2; padding: 0 .3em; border-radius: 3px; }
+  .ver { color: #888; font-size: .85rem; }
+  esp-web-install-button { --esp-tools-button-color: #1976d2; --esp-tools-button-text-color: #fff; }
+</style>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+</head>
+<body>
+<h1>AtomMatrixWeather インストール</h1>
+<p>M5Stack ATOM Matrix にブラウザから直接ファームウェアを書き込みます。Arduino IDE は不要です。</p>
+<p class="ver">ファームウェア: <strong>__VERSION__</strong></p>
+
+<div class="card note">
+  <strong>事前に確認</strong>
+  <ul>
+    <li>ブラウザは <strong>Chrome</strong> または <strong>Edge</strong> (PC 版) を使ってください。Safari / Firefox / スマホは非対応です</li>
+    <li>Mac の場合、USB シリアルドライバ (CH9102 / CH552) が必要なことがあります。ATOM が認識されない場合は
+      <a href="https://docs.m5stack.com/en/download" target="_blank" rel="noopener">M5Stack のドライバページ</a> からインストールしてください</li>
+    <li>データ通信できる USB-C ケーブルで接続してください (充電専用ケーブルは不可)</li>
+  </ul>
+</div>
+
+<div class="card">
+  <ol>
+    <li>ATOM Matrix を USB で PC に接続する</li>
+    <li>下のボタンを押し、表示されたシリアルポートを選んで「接続」する</li>
+    <li>「INSTALL」を選ぶ。既に設定済みの機体で Wi-Fi 設定を消したい場合だけ「Erase device」にチェックを入れる</li>
+  </ol>
+  <esp-web-install-button manifest="manifest.json">
+    <span slot="unsupported">このブラウザは Web Serial に対応していません。PC 版の Chrome / Edge で開いてください。</span>
+    <span slot="not-allowed">HTTPS で開く必要があります。</span>
+  </esp-web-install-button>
+</div>
+
+<div class="card">
+  <strong>書き込み後</strong>
+  <p>初回は自動で設定モード (LED が青く回転) になります。スマホ/PC から Wi-Fi <code>AtomWeather-XXXX</code> に接続し、Wi-Fi と都道府県を設定してください。
+  詳しい手順は <a href="https://github.com/atinfinity/atom-matrix-weather#書き込みと初期設定" target="_blank" rel="noopener">README</a> を参照してください。</p>
+</div>
+</body>
+</html>

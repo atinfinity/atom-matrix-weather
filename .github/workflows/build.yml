@@ -1,0 +1,93 @@
+name: Build firmware
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FQBN: m5stack:esp32:m5stack_atom
+  M5STACK_INDEX: https://static-cdn.m5stack.com/resource/arduino/package_m5stack_index.json
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: arduino/setup-arduino-cli@v2
+
+      - name: Install board core and libraries (pinned)
+        run: |
+          arduino-cli config init --additional-urls "$M5STACK_INDEX"
+          arduino-cli core update-index
+          arduino-cli core install m5stack:esp32@3.3.7
+          arduino-cli lib install "M5Unified@0.2.14" "ArduinoJson@7.4.3" "Adafruit NeoPixel@1.15.5"
+
+      - name: Resolve version
+        id: ver
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=dev-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compile
+        run: |
+          arduino-cli compile --fqbn "$FQBN" \
+            --build-property "compiler.cpp.extra_flags=-DFW_VERSION=\"${{ steps.ver.outputs.version }}\"" \
+            --output-dir build AtomMatrixWeather
+
+      - name: Assemble site (docs + firmware + manifest)
+        run: |
+          mkdir -p site/firmware
+          cp -r docs/. site/
+          cp build/AtomMatrixWeather.ino.merged.bin site/firmware/AtomMatrixWeather.merged.bin
+          VERSION="${{ steps.ver.outputs.version }}"
+          sed "s/__VERSION__/${VERSION}/g" docs/manifest.json > site/manifest.json
+          sed -i "s/__VERSION__/${VERSION}/g" site/index.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ steps.ver.outputs.version }}
+          path: |
+            build/AtomMatrixWeather.ino.bin
+            build/AtomMatrixWeather.ino.merged.bin
+
+      - uses: actions/upload-pages-artifact@v3
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          path: site
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          cp build/AtomMatrixWeather.ino.merged.bin "AtomMatrixWeather-${VERSION}.merged.bin"
+          cp build/AtomMatrixWeather.ino.bin "AtomMatrixWeather-${VERSION}.app.bin"
+          gh release create "$VERSION" \
+            --title "AtomMatrixWeather $VERSION" \
+            --generate-notes \
+            "AtomMatrixWeather-${VERSION}.merged.bin#フルフラッシュイメージ (offset 0x0)" \
+            "AtomMatrixWeather-${VERSION}.app.bin#アプリのみ (offset 0x10000)"
+
+  deploy-pages:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
