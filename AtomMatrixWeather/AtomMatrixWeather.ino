@@ -9,6 +9,7 @@
  *   - 設定       : 初回起動時 or ボタン3秒長押しで AP モードに入り、
  *                  スマホ/PC から Wi-Fi と都道府県を設定 (Preferences に保存)
  *   - 更新       : UPDATE_INTERVAL_MS ごとに定期取得。ボタン短押しで即時取得
+ *   - 再試行     : 取得失敗時は FETCH_RETRY_INITIAL_MS から指数バックオフで再試行
  *   - 再接続     : Wi-Fi 切断を loop() で監視し、指数バックオフで自動再接続
  *
  * 必要ライブラリ : M5Unified, ArduinoJson (v7), Adafruit NeoPixel
@@ -34,6 +35,13 @@
 #define WIFI_CONNECT_TIMEOUT_MS 20000              // Wi-Fi 接続待ちの上限
 #define WIFI_RETRY_INITIAL_MS 10000                // 再接続バックオフの初期間隔 (10秒)
 #define WIFI_RETRY_MAX_MS (5UL * 60UL * 1000UL)    // 再接続バックオフの上限 (5分)
+#define FETCH_RETRY_INITIAL_MS (60UL * 1000UL)     // 取得失敗時の再試行間隔の初期値 (1分)
+#define FETCH_RETRY_MAX_MS (10UL * 60UL * 1000UL)  // 取得失敗時の再試行間隔の上限 (10分)
+
+// 天気 API のホスト。テスト用にビルド時に差し替え可能 (-DOPEN_METEO_HOST=\"...\")
+#ifndef OPEN_METEO_HOST
+#define OPEN_METEO_HOST "api.open-meteo.com"
+#endif
 #define LONG_PRESS_MS 3000                         // 設定モードに入る長押し時間
 #define DEFAULT_PREF_INDEX 12                      // 設定不正時のフォールバック (東京都)
 
@@ -148,6 +156,7 @@ unsigned long lastFetchMs = 0;
 bool hasFetched = false;     // 一度でも取得を試みたか (表示の切り替えに使用)
 bool lastFetchOk = false;    // 直近の取得が成功したか
 bool fetchRequested = true;  // 起動直後に1回取得
+unsigned long fetchRetryDelayMs = FETCH_RETRY_INITIAL_MS;  // 直近の取得が失敗したときの次回までの間隔
 
 WifiState wifiState = WIFI_IDLE;
 unsigned long wifiStateSinceMs = 0;
@@ -277,7 +286,7 @@ static bool wifiIsConnected() { return wifiState == WIFI_CONNECTED; }
 
 static bool fetchWeather() {
   const Prefecture& p = PREFECTURES[settings.prefIndex];
-  String url = "https://api.open-meteo.com/v1/forecast?latitude=" + String(p.lat, 2) +
+  String url = "https://" OPEN_METEO_HOST "/v1/forecast?latitude=" + String(p.lat, 2) +
                "&longitude=" + String(p.lon, 2) +
                "&hourly=weathercode&timezone=Asia%2FTokyo&forecast_days=1";
   Serial.printf("[Fetch] %s: %s\n", p.name, url.c_str());
@@ -332,11 +341,24 @@ static bool fetchWeather() {
 static void doFetch() {
   status = ST_FETCHING;
   renderWeather();
+  bool prevFailed = hasFetched && !lastFetchOk;
   lastFetchOk = fetchWeather();
   status = lastFetchOk ? ST_NONE : ST_ERROR;
   lastFetchMs = millis();
   hasFetched = true;
+  if (lastFetchOk) {
+    fetchRetryDelayMs = FETCH_RETRY_INITIAL_MS;
+  } else {
+    // 連続失敗なら間隔を倍増 (上限あり)。成功するまで短い間隔で再試行する
+    if (prevFailed) fetchRetryDelayMs = min(fetchRetryDelayMs * 2, (unsigned long)FETCH_RETRY_MAX_MS);
+    Serial.printf("[Fetch] failed, retry in %lu s\n", fetchRetryDelayMs / 1000UL);
+  }
   renderWeather();
+}
+
+// 次回の定期取得までの間隔: 直近が成功なら通常間隔、失敗なら再試行間隔
+static unsigned long nextFetchIntervalMs() {
+  return lastFetchOk ? UPDATE_INTERVAL_MS : fetchRetryDelayMs;
 }
 
 // 通常モードの表示更新: 天気未取得で接続待ちなら緑回転、それ以外は天気+ステータスドット
@@ -518,7 +540,7 @@ void loop() {
 
   wifiTick();
 
-  if (!fetchRequested && hasFetched && millis() - lastFetchMs >= UPDATE_INTERVAL_MS) {
+  if (!fetchRequested && hasFetched && millis() - lastFetchMs >= nextFetchIntervalMs()) {
     fetchRequested = true;
   }
   if (fetchRequested && wifiIsConnected()) {
