@@ -67,33 +67,34 @@
     <text x="805" y="326" font-size="11">http://192.168.4.1/</text>
 
     <!-- config: smartphone -->
-    <rect x="730" y="360" width="150" height="56" rx="8" fill="#f4f4f4" stroke="#999"/>
-    <text x="805" y="382" font-size="12">スマホ/PCから</text>
-    <text x="805" y="398" font-size="12">SSID・PW・都道府県を保存</text>
+    <rect x="730" y="360" width="150" height="66" rx="8" fill="#f4f4f4" stroke="#999"/>
+    <text x="805" y="378" font-size="12">スマホ/PCから</text>
+    <text x="805" y="394" font-size="12">SSID / パスワード /</text>
+    <text x="805" y="410" font-size="12">都道府県を保存</text>
     <line x1="805" y1="340" x2="805" y2="360" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
     <!-- restart back to boot -->
-    <path d="M880,388 L892,388 L892,110 L720,110" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <path d="M880,393 L892,393 L892,110 L720,110" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
     <text x="893" y="250" font-size="11" fill="#555" transform="rotate(90 893 250)">再起動</text>
 
     <!-- no -> normal -->
     <line x1="640" y1="240" x2="640" y2="270" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
     <text x="655" y="260" font-size="11" fill="#555">No</text>
-    <rect x="540" y="270" width="170" height="52" rx="8" fill="#e6f7e6" stroke="#3a8a3a"/>
-    <text x="625" y="292" font-weight="bold">Wi-Fi 接続 (緑回転)</text>
-    <text x="625" y="310" font-size="11">Open-Meteo から今日の天気を取得</text>
-    <line x1="625" y1="322" x2="625" y2="352" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="510" y="270" width="200" height="52" rx="8" fill="#e6f7e6" stroke="#3a8a3a"/>
+    <text x="610" y="292" font-weight="bold">Wi-Fi 接続 (緑回転)</text>
+    <text x="610" y="310" font-size="10.5">Open-Meteo から今日の天気を取得</text>
+    <line x1="610" y1="322" x2="610" y2="352" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-    <rect x="540" y="352" width="170" height="52" rx="8" fill="#fff0e0" stroke="#d87a2a"/>
-    <text x="625" y="374" font-weight="bold">LED に午前/午後を表示</text>
-    <text x="625" y="392" font-size="11">失敗時は前回表示を維持 + 赤ドット</text>
+    <rect x="510" y="352" width="200" height="52" rx="8" fill="#fff0e0" stroke="#d87a2a"/>
+    <text x="610" y="374" font-weight="bold">LED に午前/午後を表示</text>
+    <text x="610" y="392" font-size="10.5">失敗時は前回表示を維持 + 赤ドット</text>
 
     <!-- loop back -->
-    <path d="M540,378 L510,378 L510,296 L540,296" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <text x="508" y="336" font-size="11" fill="#555" text-anchor="end">30分ごと /</text>
-    <text x="508" y="350" font-size="11" fill="#555" text-anchor="end">短押しで即時</text>
+    <path d="M510,378 L485,378 L485,296 L510,296" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="482" y="336" font-size="11" fill="#555" text-anchor="end">30分ごと /</text>
+    <text x="482" y="350" font-size="11" fill="#555" text-anchor="end">短押しで即時</text>
 
     <!-- long press -> config -->
     <path d="M710,378 L722,378 L722,305 L730,305" fill="none" stroke="#3a6ad8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
-    <text x="706" y="340" font-size="11" fill="#3a6ad8" text-anchor="end">3秒長押し</text>
+    <text x="718" y="340" font-size="11" fill="#3a6ad8" text-anchor="end">3秒長押し</text>
   </g>
 </svg>
