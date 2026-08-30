@@ -111,8 +111,8 @@ static uint32_t weatherColor(WeatherKind k) {
     case WX_CLEAR:   return pixels.Color(255, 120, 0);    // オレンジ
     case WX_CLOUDY:  return pixels.Color(120, 120, 120);  // グレー白
     case WX_RAIN:    return pixels.Color(0, 60, 255);     // 青
-    case WX_SNOW:    return pixels.Color(80, 200, 255);   // 水色
-    case WX_THUNDER: return pixels.Color(160, 0, 255);    // 紫
+    case WX_SNOW:    return pixels.Color(255, 255, 255);  // 白
+    case WX_THUNDER: return pixels.Color(255, 220, 0);    // 黄
     default:         return 0;
   }
 }
