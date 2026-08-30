@@ -34,6 +34,11 @@
 #define LONG_PRESS_MS 3000                         // 設定モードに入る長押し時間
 #define DEFAULT_PREF_INDEX 12                      // 設定不正時のフォールバック (東京都)
 
+// ファームウェアのバージョン。CI がタグ名を -DFW_VERSION で渡す。手元ビルドでは "dev"
+#ifndef FW_VERSION
+#define FW_VERSION "dev"
+#endif
+
 // ------------------------------------------------------------
 // ハードウェア定数
 // ------------------------------------------------------------
@@ -334,7 +339,8 @@ static void handleRoot() {
     html += ">" + String(PREFECTURES[i].name) + "</option>";
   }
   html += "</select>";
-  html += "<button type=\"submit\">保存して再起動</button></form></body></html>";
+  html += "<button type=\"submit\">保存して再起動</button></form>";
+  html += "<p style=\"color:#888;font-size:12px\">AtomMatrixWeather " FW_VERSION "</p></body></html>";
   server.send(200, "text/html; charset=utf-8", html);
 }
 
@@ -393,7 +399,7 @@ void setup() {
   M5.begin(cfg);
   Serial.begin(115200);
   delay(100);
-  Serial.println("\n[Boot] AtomMatrixWeather");
+  Serial.println("\n[Boot] AtomMatrixWeather " FW_VERSION);
 
   pixels.begin();
   pixels.setBrightness(LED_BRIGHTNESS);

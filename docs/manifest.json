@@ -1,0 +1,13 @@
+{
+  "name": "AtomMatrixWeather",
+  "version": "__VERSION__",
+  "new_install_prompt_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "firmware/AtomMatrixWeather.merged.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
