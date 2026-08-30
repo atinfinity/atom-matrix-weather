@@ -22,7 +22,7 @@ Arduino IDE なしで、ビルド済みファームウェアをブラウザか�
 2. PC 版の Chrome / Edge で **インストールページ** <https://atinfinity.github.io/atom-matrix-weather/> を開く
 3. 「CONNECT」→ シリアルポートを選択 →「INSTALL」
 
-- Mac で ATOM が認識されない場合は、USB シリアルドライバ (CH9102 / CH552) を [M5Stack のドライバページ](https://docs.m5stack.com/en/download) からインストールしてください
+- ATOM が認識されない場合は、**FTDI VCP ドライバ** を [M5Stack のダウンロードページ](https://docs.m5stack.com/en/download) からインストールしてください (ATOM Matrix は旧型・v1.1 とも FTDI 製の USB シリアルチップです)
 - 設定済みの機体を再インストールする場合、Wi-Fi 設定は保持されます。消したい場合は「Erase device」にチェックを入れてください
 - `esptool` で書き込む場合は [Releases](https://github.com/atinfinity/atom-matrix-weather/releases) の `*.merged.bin` を offset `0x0` に書き込みます
 
