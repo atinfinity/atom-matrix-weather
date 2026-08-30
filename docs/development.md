@@ -7,7 +7,7 @@
 | 定数 | 既定値 | 説明 |
 |---|---|---|
 | `UPDATE_INTERVAL_MS` | 30 分 | 天気の取得間隔 |
-| `LED_BRIGHTNESS` | 20 | LED の明るさ (0-255) |
+| `LED_BRIGHTNESS` | 90 | LED の明るさ (0-255) |
 | `ROTATE_180` | 0 | 1 で表示を 180 度回転 (USB を上にして置く場合) |
 | `WIFI_CONNECT_TIMEOUT_MS` | 20 秒 | Wi-Fi 接続待ちの上限 |
 | `LONG_PRESS_MS` | 3 秒 | 設定モードに入る長押し時間 |
