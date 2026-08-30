@@ -9,11 +9,11 @@
   <g id="grid">
     <!-- rows -->
     <g>
-      <rect x="95" y="101" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="101" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="101" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="101" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="101" width="30" height="30" rx="6" fill="#0040ff"/>
-      <rect x="95" y="141" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="141" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="141" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="141" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="141" width="30" height="30" rx="6" fill="#0040ff"/>
-      <rect x="95" y="181" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="181" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="181" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="181" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="181" width="30" height="30" rx="6" fill="#0040ff"/>
-      <rect x="95" y="221" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="221" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="221" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="221" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="221" width="30" height="30" rx="6" fill="#0040ff"/>
-      <rect x="95" y="261" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="261" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="261" width="30" height="30" rx="6" fill="#ff0000"/><rect x="215" y="261" width="30" height="30" rx="6" fill="#0040ff"/><rect x="255" y="261" width="30" height="30" rx="6" fill="#0040ff"/>
+      <rect x="95" y="101" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="101" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="101" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="101" width="30" height="30" rx="6" fill="#0000ff"/><rect x="255" y="101" width="30" height="30" rx="6" fill="#0000ff"/>
+      <rect x="95" y="141" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="141" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="141" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="141" width="30" height="30" rx="6" fill="#0000ff"/><rect x="255" y="141" width="30" height="30" rx="6" fill="#0000ff"/>
+      <rect x="95" y="181" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="181" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="181" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="181" width="30" height="30" rx="6" fill="#0000ff"/><rect x="255" y="181" width="30" height="30" rx="6" fill="#0000ff"/>
+      <rect x="95" y="221" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="221" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="221" width="30" height="30" rx="6" fill="#444"/><rect x="215" y="221" width="30" height="30" rx="6" fill="#0000ff"/><rect x="255" y="221" width="30" height="30" rx="6" fill="#0000ff"/>
+      <rect x="95" y="261" width="30" height="30" rx="6" fill="#ff7800"/><rect x="135" y="261" width="30" height="30" rx="6" fill="#ff7800"/><rect x="175" y="261" width="30" height="30" rx="6" fill="#ff0000"/><rect x="215" y="261" width="30" height="30" rx="6" fill="#0000ff"/><rect x="255" y="261" width="30" height="30" rx="6" fill="#0000ff"/>
     </g>
   </g>
   <!-- USB connector -->
@@ -30,8 +30,8 @@
   <g font-size="13" fill="#333">
     <text x="60" y="428" font-weight="bold">色の凡例</text>
     <rect x="60" y="440" width="16" height="16" rx="3" fill="#ff7800"/><text x="84" y="453">晴</text>
-    <rect x="130" y="440" width="16" height="16" rx="3" fill="#8a8a8a"/><text x="154" y="453">曇</text>
-    <rect x="200" y="440" width="16" height="16" rx="3" fill="#0040ff"/><text x="224" y="453">雨</text>
+    <rect x="130" y="440" width="16" height="16" rx="3" fill="#c8c8c8"/><text x="154" y="453">曇</text>
+    <rect x="200" y="440" width="16" height="16" rx="3" fill="#0000ff"/><text x="224" y="453">雨</text>
     <rect x="270" y="440" width="16" height="16" rx="3" fill="#ffffff" stroke="#999"/><text x="294" y="453">雪</text>
     <rect x="60" y="468" width="16" height="16" rx="3" fill="#ffdc00"/><text x="84" y="481">雷雨</text>
     <rect x="130" y="468" width="16" height="16" rx="3" fill="#0050ff"/><text x="154" y="481">青回転 = 設定モード</text>

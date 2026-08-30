@@ -29,7 +29,7 @@
 // ユーザー設定 (必要に応じて変更)
 // ------------------------------------------------------------
 #define UPDATE_INTERVAL_MS (30UL * 60UL * 1000UL)  // 天気の取得間隔 (30分)
-#define LED_BRIGHTNESS 20                          // 0-255 (ATOM の LED はかなり眩しい)
+#define LED_BRIGHTNESS 90                          // 0-255 (ATOM の LED はかなり眩しい)
 #define ROTATE_180 0                               // 1 にすると表示を180度回転
 #define WIFI_CONNECT_TIMEOUT_MS 20000              // Wi-Fi 接続待ちの上限
 #define WIFI_RETRY_INITIAL_MS 10000                // 再接続バックオフの初期間隔 (10秒)
@@ -109,8 +109,8 @@ static const char* weatherName(WeatherKind k) {
 static uint32_t weatherColor(WeatherKind k) {
   switch (k) {
     case WX_CLEAR:   return pixels.Color(255, 120, 0);    // オレンジ
-    case WX_CLOUDY:  return pixels.Color(120, 120, 120);  // グレー白
-    case WX_RAIN:    return pixels.Color(0, 60, 255);     // 青
+    case WX_CLOUDY:  return pixels.Color(200, 200, 200);  // グレー白 (暗いと RGB が分離して見えるため明るめ)
+    case WX_RAIN:    return pixels.Color(0, 0, 255);      // 青
     case WX_SNOW:    return pixels.Color(255, 255, 255);  // 白
     case WX_THUNDER: return pixels.Color(255, 220, 0);    // 黄
     default:         return 0;
