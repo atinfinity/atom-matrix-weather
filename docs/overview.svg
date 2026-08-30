@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" font-family="Helvetica, Arial, 'Hiragino Sans', sans-serif">
-  <rect width="960" height="560" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="590" viewBox="0 0 960 590" font-family="Helvetica, Arial, 'Hiragino Sans', sans-serif">
+  <rect width="960" height="590" fill="#ffffff"/>
   <text x="450" y="34" text-anchor="middle" font-size="22" font-weight="bold" fill="#222">AtomMatrixWeather 動作イメージ</text>
 
   <!-- ===== LED display example ===== -->
@@ -24,7 +24,7 @@
   <text x="130" y="360" text-anchor="middle" font-size="13" fill="#333">午前 (6-12時)</text>
   <text x="250" y="360" text-anchor="middle" font-size="13" fill="#333">午後 (12-18時)</text>
   <line x1="190" y1="296" x2="190" y2="376" stroke="#c00" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="190" y="392" text-anchor="middle" font-size="12" fill="#c00">ステータス: 黄=取得中 / 赤=失敗</text>
+  <text x="190" y="392" text-anchor="middle" font-size="12" fill="#c00">ステータス: 緑=再接続中 / 黄=取得中 / 赤=失敗</text>
 
   <!-- legend -->
   <g font-size="13" fill="#333">
@@ -35,8 +35,9 @@
     <rect x="270" y="440" width="16" height="16" rx="3" fill="#50c8ff"/><text x="294" y="453">雪</text>
     <rect x="60" y="468" width="16" height="16" rx="3" fill="#a000ff"/><text x="84" y="481">雷雨</text>
     <rect x="130" y="468" width="16" height="16" rx="3" fill="#0050ff"/><text x="154" y="481">青回転 = 設定モード</text>
-    <rect x="60" y="496" width="16" height="16" rx="3" fill="#00c800"/><text x="84" y="509">緑回転 = Wi-Fi 接続待ち</text>
-    <text x="60" y="540" font-size="12" fill="#666">各時間帯は時間別の天気コードのうち最も悪いものを採用 (晴 &lt; 曇 &lt; 雨 &lt; 雪 &lt; 雷雨)</text>
+    <rect x="60" y="496" width="16" height="16" rx="3" fill="#00c800"/><text x="84" y="509">緑回転 = 初回の Wi-Fi 接続待ち (天気未取得時)</text>
+    <circle cx="68" cy="532" r="6" fill="#00c800"/><text x="84" y="537">緑ドット = Wi-Fi 再接続中 (天気表示は維持)</text>
+    <text x="60" y="576" font-size="12" fill="#666">各時間帯は時間別の天気コードのうち最も悪いものを採用 (晴 &lt; 曇 &lt; 雨 &lt; 雪 &lt; 雷雨)</text>
   </g>
 
   <!-- ===== Flow ===== -->
@@ -80,7 +81,7 @@
     <line x1="640" y1="240" x2="640" y2="270" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
     <text x="655" y="260" font-size="11" fill="#555">No</text>
     <rect x="510" y="270" width="200" height="52" rx="8" fill="#e6f7e6" stroke="#3a8a3a"/>
-    <text x="610" y="292" font-weight="bold">Wi-Fi 接続 (緑回転)</text>
+    <text x="610" y="292" font-weight="bold">Wi-Fi 接続 (初回は緑回転)</text>
     <text x="610" y="310" font-size="10.5">Open-Meteo から今日の天気を取得</text>
     <line x1="610" y1="322" x2="610" y2="352" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
 
@@ -89,9 +90,19 @@
     <text x="610" y="392" font-size="10.5">失敗時は前回表示を維持 + 赤ドット</text>
 
     <!-- loop back -->
-    <path d="M510,378 L485,378 L485,296 L510,296" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <text x="482" y="336" font-size="11" fill="#555" text-anchor="end">30分ごと /</text>
-    <text x="482" y="350" font-size="11" fill="#555" text-anchor="end">短押しで即時</text>
+    <path d="M510,378 L470,378 L470,296 L510,296" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="450" y="336" font-size="11" fill="#555" text-anchor="end">30分ごと /</text>
+    <text x="450" y="350" font-size="11" fill="#555" text-anchor="end">短押しで即時</text>
+
+    <!-- disconnect -> reconnect wait -->
+    <line x1="585" y1="404" x2="585" y2="440" stroke="#2a8a2a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+    <text x="592" y="427" font-size="11" fill="#2a8a2a" text-anchor="start">切断 / 接続失敗</text>
+    <rect x="510" y="440" width="200" height="52" rx="8" fill="#f0faf0" stroke="#2a8a2a" stroke-dasharray="4,3"/>
+    <text x="610" y="462" font-weight="bold">再接続待機 (緑ドット)</text>
+    <text x="610" y="480" font-size="10.5">10秒→最大5分のバックオフで再試行</text>
+    <!-- reconnected -> back to Wi-Fi connect -->
+    <path d="M510,466 L455,466 L455,283 L510,283" fill="none" stroke="#2a8a2a" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="450" y="470" font-size="11" fill="#2a8a2a" text-anchor="end">再接続 → 即取得</text>
 
     <!-- long press -> config -->
     <path d="M710,378 L722,378 L722,305 L730,305" fill="none" stroke="#3a6ad8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
