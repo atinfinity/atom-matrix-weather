@@ -38,6 +38,10 @@ AM AM ST PM PM
 - **青の回転** … 設定モード (AP モード)
 - **緑の回転** … Wi-Fi 接続待ち
 
+### LED パターン一覧
+
+![LED パターン](docs/led-patterns.svg)
+
 ## 必要なもの
 
 - Arduino IDE + M5Stack ボードマネージャ (esp32 core 3.x)
