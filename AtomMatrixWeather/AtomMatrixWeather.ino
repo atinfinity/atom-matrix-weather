@@ -331,7 +331,10 @@ static void handleRoot() {
   html += scannedSsidOptions;
   html += "</select>";
   html += "<label>Wi-Fi SSID (手入力・こちらが優先)</label><input name=\"ssid\" value=\"" + settings.ssid + "\">";
-  html += "<label>Wi-Fi パスワード</label><input name=\"pass\" type=\"password\" value=\"" + settings.pass + "\">";
+  // パスワードは HTML に含めない。空欄のまま保存すると (同じ SSID なら) 前回値を維持する
+  html += "<label>Wi-Fi パスワード</label><input name=\"pass\" type=\"password\" placeholder=\"";
+  html += settings.pass.length() ? "保存済み (変更する場合のみ入力)" : "パスワード";
+  html += "\">";
   html += "<label>都道府県</label><select name=\"pref\">";
   for (int i = 0; i < PREF_COUNT; i++) {
     html += "<option value=\"" + String(i) + "\"";
@@ -353,14 +356,24 @@ static void handleSave() {
                 String(FPSTR(HTML_HEAD)) + "<p>SSID が空です。<a href=\"/\">戻る</a></p></body></html>");
     return;
   }
+  String pass = server.arg("pass");
+  bool keptPassword = false;
+  if (pass.length() == 0 && ssid == settings.ssid && settings.pass.length() > 0) {
+    // 同じ SSID でパスワード空欄 → 前回値を維持。SSID が変わった場合はオープン網として空を保存
+    pass = settings.pass;
+    keptPassword = true;
+  }
   settings.ssid = ssid;
-  settings.pass = server.arg("pass");
+  settings.pass = pass;
   int pref = server.arg("pref").toInt();
   settings.prefIndex = (pref >= 0 && pref < PREF_COUNT) ? pref : DEFAULT_PREF_INDEX;
   saveSettings();
-  Serial.printf("[AP] saved ssid=%s pref=%s\n", settings.ssid.c_str(), PREFECTURES[settings.prefIndex].name);
-  server.send(200, "text/html; charset=utf-8",
-              String(FPSTR(HTML_HEAD)) + "<p>保存しました。再起動します。</p></body></html>");
+  Serial.printf("[AP] saved ssid=%s pref=%s password=%s\n", settings.ssid.c_str(),
+                PREFECTURES[settings.prefIndex].name, keptPassword ? "kept" : "updated");
+  String html = String(FPSTR(HTML_HEAD)) + "<p>保存しました。再起動します。</p>";
+  if (keptPassword) html += "<p>パスワードは前回の値を維持しました。</p>";
+  html += "</body></html>";
+  server.send(200, "text/html; charset=utf-8", html);
   delay(1000);
   ESP.restart();
 }
