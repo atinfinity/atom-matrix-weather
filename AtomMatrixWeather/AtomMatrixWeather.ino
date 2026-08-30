@@ -297,9 +297,12 @@ static bool fetchWeather() {
     return false;
   }
 
-  JsonDocument doc;
-  DeserializationError err = deserializeJson(doc, http.getStream());
+  // Open-Meteo は Transfer-Encoding: chunked で返す。getStream() の生ストリームには
+  // chunk サイズが混ざり deserializeJson が InvalidInput になるため、getString() でデコードしてから解析する
+  String body = http.getString();
   http.end();
+  JsonDocument doc;
+  DeserializationError err = deserializeJson(doc, body);
   if (err) {
     Serial.printf("[Fetch] JSON error: %s\n", err.c_str());
     return false;
