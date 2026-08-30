@@ -22,7 +22,11 @@ Arduino IDE なしで、ビルド済みファームウェアをブラウザか�
 2. PC 版の Chrome / Edge で **インストールページ** <https://atinfinity.github.io/atom-matrix-weather/> を開く
 3. 「CONNECT」→ シリアルポートを選択 →「INSTALL」
 
-- ATOM が認識されない場合は、**FTDI VCP ドライバ** を [M5Stack のダウンロードページ](https://docs.m5stack.com/en/download) からインストールしてください (ATOM Matrix は旧型・v1.1 とも FTDI 製の USB シリアルチップです)
+- ATOM が認識されない場合は **FTDI VCP ドライバ** をインストールしてください (ATOM Matrix は旧型・v1.1 とも FTDI 製の USB シリアルチップです)。配布元は FTDI の [VCP Drivers ページ](https://ftdichip.com/drivers/vcp-drivers/) で、OS ごとの導入方法は次のとおりです
+  - **Windows**: 通常は接続時に Windows Update で自動インストールされます。されない場合は [VCP Drivers ページ](https://ftdichip.com/drivers/vcp-drivers/) の Windows 欄にある setup executable を実行してください
+  - **macOS**: macOS 10.11 以降は Apple 標準の FTDI ドライバが組み込まれており、通常はインストール不要です。認識されない場合のみ [VCP Drivers ページ](https://ftdichip.com/drivers/vcp-drivers/) の macOS 欄からインストールしてください
+  - **Linux**: カーネル標準の `ftdi_sio` モジュールで動作し、ドライバのインストールは不要です。`/dev/ttyUSB0` にアクセスできない場合はユーザーを `dialout` グループに追加してください (`sudo usermod -aG dialout $USER` の後に再ログイン)。Chrome の Web Serial から見えない場合も同じ権限の問題です
+  - M5Stack の [ダウンロードページ](https://docs.m5stack.com/en/download) からも同じ FTDI ページにリンクされています
 - 設定済みの機体を再インストールする場合、Wi-Fi 設定は保持されます。消したい場合は「Erase device」にチェックを入れてください
 - `esptool` で書き込む場合は [Releases](https://github.com/atinfinity/atom-matrix-weather/releases) の `*.merged.bin` を offset `0x0` に書き込みます
 
